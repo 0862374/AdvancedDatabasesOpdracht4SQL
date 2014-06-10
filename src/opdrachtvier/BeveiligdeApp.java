@@ -7,6 +7,7 @@ package opdrachtvier;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.JComboBox;
@@ -20,7 +21,7 @@ public class BeveiligdeApp {
     public BeveiligdeApp() {
         Frame frm = new Frame("Choose action");
         frm.setVisible(true);
-        frm.setSize(400, 200);
+        frm.setSize(400, 100);
         frm.addWindowListener(new WindowAdapter() { // Make sure the window can be closed by the cross button
             @Override
             public void windowClosing(WindowEvent e) {
@@ -39,10 +40,65 @@ public class BeveiligdeApp {
         stud.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                p.remove(stud);
-                p.remove(klas);
+                Panel p2 = new Panel();
 
-                DatabaseSecure db = new DatabaseSecure("student");
+                Label usr = new Label("Username: ");
+                TextField usrnm = new TextField();
+
+                Label pwd = new Label("Password: ");
+                TextField pwdf = new TextField();
+                pwdf.setEchoChar('*');
+
+                Button search = new Button();
+                search.setLabel("Zoek de gegevens");
+                search.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent f) {
+                        String user = usrnm.getText();
+                        String pass = pwdf.getText();
+
+                        DatabaseSecure db = new DatabaseSecure("student");
+                        try {
+                            String getUsr = "SELECT COUNT(*) FROM usr WHERE un = '" + user + "' AND ww = '" + pass + "'";
+                            System.out.println(getUsr);
+                            ResultSet rs = db.stmt.executeQuery(getUsr);
+
+                            Panel p3 = new Panel();
+                            p3.setLayout(new GridLayout(0, 1));
+
+                            while (rs.next()) {
+                                switch (rs.getInt("count")) {
+                                    case 1:
+                                        System.out.println("Ja");
+                                        break;
+                                    default:
+                                        Label lbln = new Label("Student niet gevonden.");
+                                        p3.add(lbln);
+                                        frm.setSize(200, 100);
+                                        break;
+                                }
+                            }
+
+                            frm.remove(p2);
+                            frm.add(p3);
+
+                        } catch (SQLException o) {
+
+                        }
+                    }
+                });
+
+                p2.setLayout(new GridLayout(0, 2, 4, 4));
+
+                p2.add(usr);
+                p2.add(usrnm);
+                p2.add(pwd);
+                p2.add(pwdf);
+                p2.add(search);
+
+                frm.remove(p);
+                frm.add(p2);
+                frm.setSize(400, 150);
 
             }
         });
@@ -54,7 +110,8 @@ public class BeveiligdeApp {
                 DatabaseSecure db = new DatabaseSecure("guest");
                 try {
                     String query = "SELECT klas_naam FROM klas";
-                    ResultSet rs1 = db.stmt.executeQuery(query);
+                    PreparedStatement ps1 = db.conn.prepareStatement(query);
+                    ResultSet rs1 = ps1.executeQuery();
 
                     Panel p2 = new Panel();
 
@@ -74,27 +131,31 @@ public class BeveiligdeApp {
                             try {
                                 DatabaseSecure db2 = new DatabaseSecure("guest");
 
-                                String query1 = "SELECT * FROM klasstud WHERE klas_naam = '" + classes.getSelectedItem().toString() + "'";
-                                ResultSet rs2 = db2.stmt.executeQuery(query1);
+                                String query1 = "SELECT * FROM klasstud WHERE klas_naam = ?";
+                                PreparedStatement ps2 = db2.conn.prepareStatement(query1);
                                 
+                                ps2.setString(1, classes.getSelectedItem().toString());
+
+                                ResultSet rs2 = ps2.executeQuery();
+
                                 Panel p3 = new Panel();
-                                
-                                p3.setLayout(new GridLayout(0,1));
+
+                                p3.setLayout(new GridLayout(0, 1));
 
                                 while (rs2.next()) {
                                     Label lbl1 = new Label("---------------------------------------------------------");
                                     Label lbl2 = new Label("Student id: " + rs2.getString("stu_id") + "\r\n");
-                                    Label lbl3 = new Label("Naam: " + rs2.getString("stu_id") + "\r\n");
+                                    Label lbl3 = new Label("Naam: " + rs2.getString("stu_naam") + "\r\n");
                                     Label lbl4 = new Label("Klas: " + rs2.getString("klas_naam") + "\r\n");
                                     Label lbl5 = new Label("Ingeschreven: " + rs2.getString("stu_ingeschreven") + "\r\n");
-                                    
+
                                     p3.add(lbl1);
                                     p3.add(lbl2);
                                     p3.add(lbl3);
                                     p3.add(lbl4);
                                     p3.add(lbl5);
                                 }
-                                
+
                                 frm.remove(p2);
                                 frm.add(p3);
                             } catch (SQLException o) {

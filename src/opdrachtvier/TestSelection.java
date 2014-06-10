@@ -18,7 +18,7 @@ public class TestSelection {
     
     public TestSelection(){
         Frame frm = new Frame("Select Database form"); // Create the frame for the form
-        frm.setSize(150,200); // Set the size of the frame
+        frm.setSize(150,90); // Set the size of the frame
         frm.setVisible(true); // Define if the frame should be visible
         frm.addWindowListener(new WindowAdapter(){ // Make sure the window can be closed by the cross button
             @Override

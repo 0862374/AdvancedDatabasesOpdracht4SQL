@@ -41,6 +41,10 @@ CREATE VIEW stud AS
 SELECT * FROM studenten AS s
 WHERE s.stu_naam = user;
 
+-- Maak een user view aan
+CREATE VIEW usr AS
+SELECT s.stu_naam AS un, s.stu_ww AS ww FROM studenten AS s;
+
 -- Maak de view aan voor een guest
 CREATE VIEW klasstud AS
 SELECT s.stu_id, s.stu_naam, k.klas_naam, s.stu_ingeschreven
@@ -51,6 +55,7 @@ WHERE s.stu_ingeschreven = 'Ja';
 
 -- Creeer de groepsrol voor student
 CREATE ROLE students;
+GRANT SELECT ON usr TO students;
 GRANT SELECT ON stud TO students;
 GRANT students TO student;
 
