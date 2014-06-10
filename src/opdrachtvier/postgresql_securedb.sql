@@ -1,5 +1,5 @@
 -- Maak de database
-CREATE DATABASE opdractviersecsql;
+CREATE DATABASE opdractviersql;
 
 -- Maak de klassen tabel aan
 CREATE TABLE klassen
@@ -17,6 +17,7 @@ CREATE TABLE studenten
 (
   stu_id serial NOT NULL,
   stu_naam text NOT NULL,
+  stu_ww text NOT NULL,
   stu_klas_id integer NOT NULL,
   stu_ingeschreven ingeschreven NOT NULL,
   CONSTRAINT stu_pk PRIMARY KEY (stu_id),
@@ -27,14 +28,13 @@ CREATE TABLE studenten
 
 -- Voeg 1 record toe aan klassen tabel, en 2 aan studenten tabel
 INSERT INTO klassen (klas_naam) VALUES ('INF2D');
-INSERT INTO studenten (stu_naam, stu_klas_id, stu_ingeschreven) VALUES
-('nabil',1,'Ja'),
-('testnaam',1,'Nee');
+INSERT INTO studenten (stu_naam, stu_ww, stu_klas_id, stu_ingeschreven) VALUES
+('nabil','1234',1,'Ja'),
+('testnaam','1234',1,'Nee');
 
 -- Maak 3 databaseusers aan
 CREATE USER guest WITH PASSWORD '1234';
-CREATE USER nabil WITH PASSWORD '1234';
-CREATE USER testnaam WITH PASSWORD '1234';
+CREATE USER student WITH PASSWORD '1234';
 
 -- Maak de view aan voor een student
 CREATE VIEW stud AS
@@ -50,12 +50,12 @@ ON s.stu_klas_id = k.klas_id
 WHERE s.stu_ingeschreven = 'Ja';
 
 -- Creeer de groepsrol voor student
-CREATE ROLE student;
-GRANT SELECT ON stud TO student;
-GRANT SELECT ON klasstud TO student;
-GRANT student TO nabil, testnaam;
+CREATE ROLE students;
+GRANT SELECT ON stud TO students;
+GRANT students TO student;
 
 -- Creeer de groepsrol voor gast
 CREATE ROLE gast;
+GRANT SELECT ON klas TO gast;
 GRANT SELECT ON klasstud TO gast;
 GRANT gast TO guest;
