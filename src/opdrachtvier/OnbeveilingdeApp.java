@@ -22,7 +22,7 @@ public class OnbeveilingdeApp {
     JTextField klasname;
 
     public OnbeveilingdeApp() {
-
+    	// make a login screen of a unsecured application
         loginScreen = new JFrame("Onbeveiligde app");
         loginScreen.setLayout(new GridLayout(0, 1));
 
@@ -40,6 +40,7 @@ public class OnbeveilingdeApp {
     }
 
     public void paintLogin() {
+    	// paint some textfields on the screen and a log in button
         username = new JTextField(10);
         password = new JTextField(10);
         JButton btnlogin = new JButton();
@@ -58,7 +59,7 @@ public class OnbeveilingdeApp {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                // TODO Auto-generated method stub
+                // if pressed on the button call the checklogin function
                 checkLogin();
             }
         });
@@ -67,8 +68,9 @@ public class OnbeveilingdeApp {
     protected void checkLogin() {
         // TODO Auto-generated method stub
         DatabaseMy db = new DatabaseMy();
-
+// make connection to the mysql database
         try {
+        	// sql that checks the username and password of the user
             String sql = "SELECT * FROM studenten INNER JOIN klassen ON stu_klas_id=klas_id WHERE stu_id = '"
                     + username.getText() + "' AND stu_ww = '" + password.getText() + "'";
             System.out.println(sql);
@@ -76,6 +78,7 @@ public class OnbeveilingdeApp {
             int rows = 0;
             while (rs.next()) {
                 if (rows == 0) {
+                	// if found a correct username password combination start functionality one and two
                     funOneScreen = new JFrame("Functionaliteit een");
                     funOneScreen.setLayout(new GridLayout(0, 1));
                     funOneScreen.setVisible(true);
@@ -125,6 +128,7 @@ public class OnbeveilingdeApp {
 
     public void getKlassen() {
         DatabaseMy db = new DatabaseMy();
+        // show all students of the inserted class
         try {
             String sql = "SELECT * FROM klassen INNER JOIN studenten ON stu_klas_id=klas_id WHERE stu_ingeschreven='Ja' AND klas_naam = '"
                     + klasname.getText() + "'";
