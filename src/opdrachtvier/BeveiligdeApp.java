@@ -59,9 +59,13 @@ public class BeveiligdeApp {
 
                         DatabaseSecure db = new DatabaseSecure("student");
                         try {
-                            String getUsr = "SELECT COUNT(*) FROM usr WHERE un = '" + user + "' AND ww = '" + pass + "'";
+                            String getUsr = "SELECT COUNT(*)  FROM usr WHERE un = ? AND ww = ?";
                             System.out.println(getUsr);
-                            ResultSet rs = db.stmt.executeQuery(getUsr);
+                            PreparedStatement ps = db.conn.prepareStatement(getUsr);
+                            
+                            ps.setString(1, user);
+                            ps.setString(2, pass);
+                            ResultSet rs = ps.executeQuery();
 
                             Panel p3 = new Panel();
                             p3.setLayout(new GridLayout(0, 1));
@@ -69,7 +73,29 @@ public class BeveiligdeApp {
                             while (rs.next()) {
                                 switch (rs.getInt("count")) {
                                     case 1:
-                                        System.out.println("Ja");
+                                        String getInfo = "SELECT s.stu_id, s.stu_naam, k.klas_naam, s.stu_ingeschreven FROM stud AS s LEFT JOIN klas AS k ON s.stu_klas_id = k.klas_id WHERE s.stu_naam = ? AND s.stu_ww = ?";
+                                        System.out.println(getInfo);
+                                        PreparedStatement ps2 = db.conn.prepareStatement(getInfo);
+
+                                        ps2.setString(1, user);
+                                        ps2.setString(2, pass);
+
+                                        ResultSet rs2 = ps2.executeQuery();
+                                        while (rs2.next()) {
+                                            Label lbl1 = new Label("---------------------------------------------------------");
+                                            Label lbl2 = new Label("Student id: " + rs2.getString("stu_id") + "\r\n");
+                                            Label lbl3 = new Label("Naam: " + rs2.getString("stu_naam") + "\r\n");
+                                            Label lbl4 = new Label("Klas: " + rs2.getString("klas_naam") + "\r\n");
+                                            Label lbl5 = new Label("Ingeschreven: " + rs2.getString("stu_ingeschreven") + "\r\n");
+                                            Label lbl6 = new Label("---------------------------------------------------------");
+
+                                            p3.add(lbl1);
+                                            p3.add(lbl2);
+                                            p3.add(lbl3);
+                                            p3.add(lbl4);
+                                            p3.add(lbl5);
+                                            p3.add(lbl6);
+                                        }
                                         break;
                                     default:
                                         Label lbln = new Label("Student niet gevonden.");
@@ -133,7 +159,7 @@ public class BeveiligdeApp {
 
                                 String query1 = "SELECT * FROM klasstud WHERE klas_naam = ?";
                                 PreparedStatement ps2 = db2.conn.prepareStatement(query1);
-                                
+
                                 ps2.setString(1, classes.getSelectedItem().toString());
 
                                 ResultSet rs2 = ps2.executeQuery();

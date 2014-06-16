@@ -38,8 +38,7 @@ CREATE USER student WITH PASSWORD '1234';
 
 -- Maak de view aan voor een student
 CREATE VIEW stud AS
-SELECT * FROM studenten AS s
-WHERE s.stu_naam = user;
+SELECT * FROM studenten AS s;
 
 -- Maak een user view aan
 CREATE VIEW usr AS
@@ -57,6 +56,7 @@ WHERE s.stu_ingeschreven = 'Ja';
 CREATE ROLE students;
 GRANT SELECT ON usr TO students;
 GRANT SELECT ON stud TO students;
+GRANT SELECT ON klas TO students;
 GRANT students TO student;
 
 -- Creeer de groepsrol voor gast
