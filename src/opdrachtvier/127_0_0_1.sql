@@ -29,8 +29,8 @@ USE `opdrachtviersql`;
 --
 
 CREATE TABLE IF NOT EXISTS `klassen` (
-  `klas_id` int(11) NOT NULL AUTO_INCREMENT,
-  `klas_naam` text NOT NULL,
+  `klas_id`         INT(11)     NOT NULL    AUTO_INCREMENT,
+  `klas_naam`       TEXT        NOT NULL,
   PRIMARY KEY (`klas_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
 
@@ -48,14 +48,14 @@ INSERT INTO `klassen` (`klas_id`, `klas_naam`) VALUES
 --
 
 CREATE TABLE IF NOT EXISTS `studenten` (
-  `stu_id` int(11) NOT NULL AUTO_INCREMENT,
-  `stu_naam` text NOT NULL,
-  `stu_ww` text NOT NULL,
-  `stu_klas_id` int(11) NOT NULL,
-  `stu_ingeschreven` enum('Ja','Nee') NOT NULL,
+  `stu_id`              INT(11)             NOT NULL    AUTO_INCREMENT,
+  `stu_naam`            TEXT                NOT NULL,
+  `stu_ww`              TEXT                NOT NULL,
+  `stu_klas_id`         INT(11)             NOT NULL,
+  `stu_ingeschreven`    ENUM('Ja','Nee') NOT NULL,
   PRIMARY KEY (`stu_id`),
   KEY `st_klas_id` (`stu_klas_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB         DEFAULT CHARSET=latin1          AUTO_INCREMENT=3 ;
 
 --
 -- Gegevens worden uitgevoerd voor tabel `studenten`

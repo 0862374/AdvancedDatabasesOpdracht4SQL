@@ -4,22 +4,22 @@ CREATE DATABASE opdractviersql;
 -- Maak de klassen tabel aan
 CREATE TABLE klassen
 (
-  klas_id serial NOT NULL,
-  klas_naam text NOT NULL,
+  klas_id       SERIAL  NOT NULL,
+  klas_naam     TEXT    NOT NULL,
   CONSTRAINT k_pk PRIMARY KEY (klas_id)
 );
 
 -- Maak een type aan voor ingeschreven
-CREATE TYPE ingeschreven AS ENUM('Ja','Nee');
+CREATE TYPE INGESCHREVEN AS ENUM('Ja','Nee');
 
 -- Maak de studenten tabel aan
 CREATE TABLE studenten
 (
-  stu_id serial NOT NULL,
-  stu_naam text NOT NULL,
-  stu_ww text NOT NULL,
-  stu_klas_id integer NOT NULL,
-  stu_ingeschreven ingeschreven NOT NULL,
+  stu_id            SERIAL          NOT NULL,
+  stu_naam          TEXT            NOT NULL,
+  stu_ww            TEXT            NOT NULL,
+  stu_klas_id       INTEGER         NOT NULL,
+  stu_ingeschreven  INGESCHREVEN    NOT NULL,
   CONSTRAINT stu_pk PRIMARY KEY (stu_id),
   CONSTRAINT stu_fk1 FOREIGN KEY (stu_klas_id)
       REFERENCES klassen (klas_id) MATCH SIMPLE
@@ -45,22 +45,27 @@ CREATE VIEW usr AS
 SELECT s.stu_naam AS un, s.stu_ww AS ww FROM studenten AS s;
 
 -- Maak de view aan voor een guest
-CREATE VIEW klasstud AS
-SELECT s.stu_id, s.stu_naam, k.klas_naam, s.stu_ingeschreven
-FROM studenten AS s
-LEFT JOIN klassen AS k
-ON s.stu_klas_id = k.klas_id
-WHERE s.stu_ingeschreven = 'Ja';
+CREATE VIEW 	klasstud AS
+SELECT 		s.stu_id, s.stu_naam, k.klas_naam, s.stu_ingeschreven
+FROM        	studenten AS s
+NATURAL JOIN   	klassen AS k
+WHERE 		s.stu_ingeschreven = 'Ja';
+
+-- Maak de view aan voor een klas
+CREATE OR REPLACE VIEW klas AS 
+ SELECT klassen.klas_id,
+    klassen.klas_naam
+   FROM klassen;
 
 -- Creeer de groepsrol voor student
-CREATE ROLE students;
-GRANT SELECT ON usr TO students;
-GRANT SELECT ON stud TO students;
-GRANT SELECT ON klas TO students;
-GRANT students TO student;
+CREATE ROLE         students;
+GRANT SELECT ON     usr         TO students;
+GRANT SELECT ON     stud        TO students;
+GRANT SELECT ON     klas        TO students;
+GRANT               students    TO student;
 
 -- Creeer de groepsrol voor gast
-CREATE ROLE gast;
-GRANT SELECT ON klas TO gast;
-GRANT SELECT ON klasstud TO gast;
-GRANT gast TO guest;
+CREATE ROLE         gast;
+GRANT SELECT ON     klas        TO gast;
+GRANT SELECT ON     klasstud    TO gast;
+GRANT               gast        TO guest;
